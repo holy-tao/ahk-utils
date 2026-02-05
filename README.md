@@ -1,2 +1,4 @@
-# ahk-template
-Template repository I use for AutoHotkey projects. It has configuration set up to run labellers and unit tests on pull requests, and has a personal fork of YUnit set up in the tests directory.
+# AHKUtils
+Repository I use to track miscellaneous libraries and utility scripts.
+
+Don't judge me, I'm getting organized
