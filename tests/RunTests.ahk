@@ -5,11 +5,10 @@
 #Include ./YUnit/JUnit.ahk
 #Include ./YUnit/Stdout.ahk
 
-#Include FileExtensions.Test.ahk
-#Include ArrayExtensions.Test.ahk
+#Include SemVer.test.ahk
 
 YUnit.Use(YunitResultCounter, YUnitJUnit, YUnitStdOut).Test(
-	; Add test classes here
+	SemVerTests
 )
 
 Exit(-YunitResultCounter.failures)
