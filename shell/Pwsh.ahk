@@ -1,9 +1,13 @@
 #Requires AutoHotkey v2.0
 
+#Requires AutoHotkey v2.0
+
 /**
- * Provides utilities for running powershell (not to be confused with `pwsh`, or PowerShell 7+) commands and files
+ * Provides utilities for running pwsh (Powershell 7+, not to be confused with regular powershell) commands and files.
+ * 
+ * Note `pwsh.exe` is not installed on Windows by default.
  */
-class Powershell {
+class Pwsh {
     /**
      * Runs a PowerShell CmdLet or series of commands, optionally capturing their outputs, via the `-Command` flag
      * 
@@ -16,16 +20,18 @@ class Powershell {
      * @param {VarRef<String>} out an optional parameter which receives the command's `stdout`. If `err` is not
      *          provided this parameter also receives the command's stderr.
      * @param {VarRef<String>} err an optional output parameter which receives the commands `stderr`
+     * @param {VarRef<Integer>} outputPid an optional output parameter which receives the PID of the powershell
+     *          process that was started. This method blocks, so this variable must be checked in another thead
      * @returns {Integer} the exit code of the command
      */
-    static Cmd(command, &out?, &err?) {
-        tmpOut := A_Temp "\" A_ScriptName ".powershell-" A_Now ".cmd.out.tmp"
-        tmpErr := A_Temp "\" A_ScriptName ".powershell-" A_Now ".cmd.err.tmp"
+    static Cmd(command, &out?, &err?, &outputPid?) {
+        tmpOut := A_Temp "\" A_ScriptName ".pwsh-" A_Now ".cmd.out.tmp"
+        tmpErr := A_Temp "\" A_ScriptName ".pwsh-" A_Now ".cmd.err.tmp"
 
-        rc := RunWait(Format('{1} /c "powershell.exe -NoLogo -NonInteractive -Command "{2}" 1>"{3}" 2>{4}"',
+        rc := RunWait(Format('{1} /c "pwsh.exe -NoLogo -NonInteractive -Command "{2}" 1>"{3}" 2>{4}"',
             A_ComSpec, command,
             IsSet(out) ? tmpOut : "NUL",
-            IsSet(err) ? tmpErr : "&1"), , "Hide")
+            IsSet(err) ? tmpErr : "&1"), , "Hide", &outputPid?)
 
         if(IsSet(out)) {
             out := Trim(FileRead(tmpOut), "`t`r`n ")
@@ -46,19 +52,21 @@ class Powershell {
      * @param {VarRef<String>} out an optional parameter which receives the command's `stdout`. If `err` is not
      *          provided this parameter also receives the command's stderr.
      * @param {VarRef<String>} err an optional output parameter which receives the commands `stderr`
+     * @param {VarRef<Integer>} outputPid an optional output parameter which receives the PID of the powershell
+     *          process that was started. This method blocks, so this variable must be checked in another thead
      * @returns {Integer} the exit code of the script
      */
-    static File(filepath, &out?, &err?) {
+    static File(filepath, &out?, &err?, &outputPid?) {
         if(!FileExist(filepath))
             throw ValueError("File must exist", -1, filepath)
 
-        tmpOut := A_Temp "\" A_ScriptName ".powershell-" A_Now ".file.out.tmp"
-        tmpErr := A_Temp "\" A_ScriptName ".powershell-" A_Now ".file.err.tmp"
+        tmpOut := A_Temp "\" A_ScriptName ".pwsh-" A_Now ".file.out.tmp"
+        tmpErr := A_Temp "\" A_ScriptName ".pwsh-" A_Now ".file.err.tmp"
 
-        rc := RunWait(Format('{1} /c "powershell.exe -NoLogo -NonInteractive -File "{2}" 1>"{3}" 2>{4}"',
+        rc := RunWait(Format('{1} /c "pwsh.exe -NoLogo -NonInteractive -File "{2}" 1>"{3}" 2>{4}"',
             A_ComSpec, filepath,
             IsSet(out) ? tmpOut : "NUL",
-            IsSet(err) ? tmpErr : "&1"), , "Hide")
+            IsSet(err) ? tmpErr : "&1"), , "Hide", &outputPid?)
 
         if(IsSet(out)) {
             out := Trim(FileRead(tmpOut), "`t`r`n ")
@@ -80,7 +88,7 @@ class Powershell {
      * @returns {String} the output of `command` 
      */
     static CmdExpect(command) {
-        rc := Powershell.Cmd(command, &out := "", &err := "")
+        rc := Pwsh.Cmd(command, &out := "", &err := "")
         if(rc != 0)
             throw Error(err, -1, command)
         return out
@@ -94,7 +102,7 @@ class Powershell {
      * @returns {String} the output of `filepath` 
      */
     static FileExpect(filepath) {
-        rc := Powershell.File(filepath, &out := "", &err := "")
+        rc := Pwsh.File(filepath, &out := "", &err := "")
         if(rc != 0)
             throw Error(err, -1, filepath)
         return out
