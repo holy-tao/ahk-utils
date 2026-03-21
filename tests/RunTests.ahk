@@ -6,9 +6,10 @@
 #Include ./YUnit/Stdout.ahk
 
 #Include SemVer.test.ahk
+#Include RegEx.test.ahk
 
 YUnit.Use(YunitResultCounter, YUnitJUnit, YUnitStdOut).Test(
-	SemVerTests
+	SemVerTests, RegExTests
 )
 
 Exit(-YunitResultCounter.failures)
