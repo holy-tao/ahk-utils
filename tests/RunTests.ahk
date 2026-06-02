@@ -7,9 +7,10 @@
 
 #Include SemVer.test.ahk
 #Include RegEx.test.ahk
+#Include DateTime.test.ahk
 
 YUnit.Use(YunitResultCounter, YUnitJUnit, YUnitStdOut).Test(
-	SemVerTests, RegExTests
+	SemVerTests, RegExTests, DateTimeTests
 )
 
 Exit(-YunitResultCounter.failures)
