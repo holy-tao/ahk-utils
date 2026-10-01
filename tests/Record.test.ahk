@@ -26,6 +26,7 @@ class Segment extends Record {
 
 ; Exercises methods and computed properties living alongside fields. These are prototype members, not instance
 ; vars, so they must NOT be treated as fields, and must survive the __Init neutralization.
+;@ahkunit-ignore
 class Person extends Record {
     age := Integer
     firstName := StrTitle
