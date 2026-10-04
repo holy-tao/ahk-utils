@@ -1,7 +1,5 @@
 #Requires AutoHotkey v2.0
 
-#Include <Extensions\Errors\TypeErrorExtensions>
-
 /**
  * Represents a semantic version, compliant with the {@link https://semver.org/ Semantic Versioning 2.0.0} 
  * specification.
@@ -75,8 +73,6 @@ class SemVer {
      * @throws {ValueError} if `str` is not a valid SemVer string
      */
     static Parse(str) {
-        TypeError.ThrowIfNot(str, String)
-
         ; If "str" begins with a v, trim it off. That's the only deviation from the standard
         ; parse will allow
         if(InStr(str, "v") == 1)
@@ -122,9 +118,7 @@ class SemVer {
      * @returns {SemVer} the parsed `SemVer` object
      * @throws {ValueError} if the string could not be fuzzy-parsed
      */
-    static FuzzyParse(str) {
-        TypeError.ThrowIfNot(str, String)
-        
+    static FuzzyParse(str) {        
         ; Allow leading "v"
         str := RegExReplace(str, "^v", "", &count := 0, 1)
         
@@ -187,18 +181,11 @@ class SemVer {
      * @param {String} build Optional build metadata 
      */
     __New(major, minor, patch, prerelease := "", build := "") {
-        TypeError.ThrowIfNotInteger(major)
-        TypeError.ThrowIfNotInteger(minor)
-        TypeError.ThrowIfNotInteger(patch)
-
-        TypeError.ThrowIfNot(prerelease, String)
-        TypeError.ThrowIfNot(build, String)
-
         this.major := Integer(major)
         this.minor := Integer(minor)
         this.patch := Integer(patch)
-        this.prerelease := prerelease
-        this.build := build
+        this.prerelease := String(prerelease)
+        this.build := String(build)
     }
 
     /**
